@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: LojaAPI
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/lojaapi
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
