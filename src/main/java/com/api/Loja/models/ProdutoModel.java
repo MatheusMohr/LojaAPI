@@ -1,13 +1,13 @@
-package com.api.Loja.models;
+package com.api.loja.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "tb_produto")
-
+@Table(name = "tbProduto")
 public class ProdutoModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,13 +1,14 @@
-package com.api.Loja.repository;
+package com.api.loja.repository;
 
-import com.api.Loja.models.LojaModel;
-import com.api.Loja.models.ProdutoModel;
+import com.api.loja.models.LojaModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface LojaRepository extends JpaRepository<ProdutoModel, UUID> {
-    List<LojaModel> findByNomeContaining(String nome);
-    List<LojaModel> findByDescricaoContaining(String descricao);
+public interface LojaRepository extends
+        JpaRepository<LojaModel, UUID> {
+
+    List<LojaModel> findByNomeContainingIgnoreCase(String nome);
+    List<LojaModel> findByDescricaoContainingIgnoreCase(String descricao);
 }

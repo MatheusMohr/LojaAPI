@@ -1,15 +1,14 @@
-package com.api.Loja.repository;
+package com.api.loja.repository;
 
-import com.api.Loja.models.ProdutoModel;
+import com.api.loja.models.ProdutoModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface ProdutoRepository extends JpaRepository<ProdutoModel, UUID> {
-    //List<ProdutoModel> findByNome(String nome);
-    List<ProdutoModel> findByNomeContaining(String nome);
-    List<ProdutoModel> findByDescricaoContaining(String descricao);
+public interface ProdutoRepository extends
+        JpaRepository<ProdutoModel, UUID> {
+
+    List<ProdutoModel> findByNomeContainingIgnoreCase(String nome);
+    List<ProdutoModel> findByDescricaoContainingIgnoreCase(String descricao);
 }
-
-

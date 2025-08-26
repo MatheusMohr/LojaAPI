@@ -1,16 +1,15 @@
-package com.api.Loja.dtos;
+package com.api.loja.dtos;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class LojaDto {
-    @NotBlank(message = "O nome é obrigatório!")
+    @NotBlank(message = "O nome é obrigatório")
     private String nome;
-    private String cnpj;
-    @NotNull(message = "O cnpj é obrigatório!")
-    @NotBlank(message = "A descrição é obrigatória!")
+
     private String descricao;
+
+    @NotBlank(message = "O cnpj é obrigatório")
+    private String cnpj;
 }
