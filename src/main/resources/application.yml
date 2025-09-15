@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: lojas
+  datasource:
+    url: jdbc:mysql://localhost:3306/lojas
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  server:
+    servlet:
+      encoding:
+      charset: utf-8
+      enabled: true
+      force: true
