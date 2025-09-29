@@ -1,6 +1,6 @@
-package com.api.loja.repository;
+package com.api.loja.loja.repository;
 
-import com.api.loja.models.LojaModel;
+import com.api.loja.loja.models.LojaModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

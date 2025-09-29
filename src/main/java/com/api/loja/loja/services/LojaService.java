@@ -1,19 +1,22 @@
-package com.api.loja.services;
+package com.api.loja.loja.services;
 
-import com.api.loja.dtos.LojaDto;
-import com.api.loja.models.LojaModel;
-import com.api.loja.repository.LojaRepository;
+import com.api.loja.loja.dtos.LojaDto;
+import com.api.loja.loja.models.LojaModel;
+import com.api.loja.loja.repository.LojaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class LojaService {
-    private LojaRepository LojaRepository;
+    private final com.api.loja.loja.repository.LojaRepository LojaRepository;
+    private final LojaRepository lojaRepository;
 
-    public LojaService(LojaRepository LojaRepository) {
+    public LojaService(com.api.loja.loja.repository.LojaRepository LojaRepository, com.api.loja.loja.repository.LojaRepository lojaRepository) {
         this.LojaRepository = LojaRepository;
+        this.lojaRepository = lojaRepository;
     }
 
     public LojaModel create(LojaDto dto) {

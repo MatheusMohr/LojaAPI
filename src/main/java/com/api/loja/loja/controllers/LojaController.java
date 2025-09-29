@@ -1,8 +1,7 @@
-package com.api.loja.controllers;
+package com.api.loja.loja.controllers;
 
-import com.api.loja.dtos.ProdutoDto;
-import com.api.loja.models.ProdutoModel;
-import com.api.loja.services.ProdutoService;
+import com.api.loja.loja.dtos.LojaDto;
+import com.api.loja.loja.models.LojaModel;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,36 +11,36 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/produtos")
+@RequestMapping("/lojas")
 @CrossOrigin(origins = "http://localhost:4200")
-public class ProdutoController {
-    private final ProdutoService produtoService;
+public class LojaController {
+    private final com.api.loja.loja.services.LojaService LojaService;
 
-    public ProdutoController(ProdutoService produtoService) {
-        this.produtoService = produtoService;
+    public LojaController(com.api.loja.loja.services.LojaService LojaService) {
+        this.LojaService = LojaService;
     }
 
     @PostMapping("/salvar")
-    public ResponseEntity<?> salvar(@RequestBody @Valid ProdutoDto dto) {
-        ProdutoModel produtoSalvo = produtoService.create(dto);
+    public ResponseEntity<?> salvar(@RequestBody @Valid LojaDto dto) {
+        LojaModel lojaSalvo = LojaService.create(dto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(lojaSalvo);
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<ProdutoModel>> listar() {
-        List<ProdutoModel> produtos = produtoService.listar();
-        return ResponseEntity.ok(produtos);
+    public ResponseEntity<List<LojaModel>> listar() {
+        List<LojaModel> lojas = LojaService.listar();
+        return ResponseEntity.ok(lojas);
     }
 
     @PutMapping("/editar/{id}")
     public ResponseEntity<?> editar(
             @PathVariable UUID id,
-            @RequestBody @Valid ProdutoDto dto) {
+            @RequestBody @Valid LojaDto dto) {
 
         try {
-            ProdutoModel produtoAtualizado = produtoService.atualizar(dto, id);
-            return ResponseEntity.status(HttpStatus.CREATED).body(produtoAtualizado);
+            LojaModel lojaAtualizado = LojaService.atualizar(dto, id);
+            return ResponseEntity.status(HttpStatus.CREATED).body(lojaAtualizado);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao editar: " + e.getMessage());
         }
@@ -50,8 +49,8 @@ public class ProdutoController {
     @DeleteMapping("/apagar/{id}")
     public ResponseEntity<?> apagar(@PathVariable(value = "id") UUID id) {
         try {
-            produtoService.apagar(id);
-            return ResponseEntity.ok("Produto apagado com sucesso!");
+            LojaService.apagar(id);
+            return ResponseEntity.ok("loja apagado com sucesso!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao apagar: " + e.getMessage());
         }
@@ -60,8 +59,8 @@ public class ProdutoController {
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable(value = "id") UUID id) {
         try {
-            ProdutoModel produtoEncontrado = produtoService.buscar(id);
-            return ResponseEntity.ok(produtoEncontrado);
+            LojaModel lojaEncontrado = LojaService.buscar(id);
+            return ResponseEntity.ok(lojaEncontrado);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar: " + e.getMessage());
         }
@@ -70,8 +69,8 @@ public class ProdutoController {
     @GetMapping("/buscar-por-nome")
     public ResponseEntity<?> buscarPorNome(@RequestParam String nomeBusca) {
         try {
-            List<ProdutoModel> produtosEncontrados = produtoService.buscarPorNome(nomeBusca);
-            return ResponseEntity.ok(produtosEncontrados);
+            List<LojaModel> lojasEncontrados = LojaService.buscarPorNome(nomeBusca);
+            return ResponseEntity.ok(lojasEncontrados);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar por nome: " + e.getMessage());
         }
@@ -80,8 +79,8 @@ public class ProdutoController {
     @GetMapping("/buscar-por-descricao")
     public ResponseEntity<?> buscarPorDescricao(@RequestParam String descricaoBusca) {
         try {
-            List<ProdutoModel> produtosEncontrados = produtoService.buscarPorDescricao(descricaoBusca);
-            return ResponseEntity.ok(produtosEncontrados);
+            List<LojaModel> lojasEncontrados = LojaService.buscarPorDescricao(descricaoBusca);
+            return ResponseEntity.ok(lojasEncontrados);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar por descricao: " + e.getMessage());
         }

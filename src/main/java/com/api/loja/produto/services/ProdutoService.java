@@ -1,8 +1,8 @@
-package com.api.loja.services;
+package com.api.loja.produto.services;
 
-import com.api.loja.dtos.ProdutoDto;
-import com.api.loja.models.ProdutoModel;
-import com.api.loja.repository.ProdutoRepository;
+import com.api.loja.produto.dtos.ProdutoDto;
+import com.api.loja.produto.models.ProdutoModel;
+import com.api.loja.produto.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Service
 public class ProdutoService {
-    private ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
 
     public ProdutoService(ProdutoRepository produtoRepository) {
         this.produtoRepository = produtoRepository;
