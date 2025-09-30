@@ -13,8 +13,9 @@ public class ProdutoDto {
     private String nome;
     private String descricao;
     @NotNull(message = "O preço é obrigatório")
-    @Min(value = 1, message = "O preço deve ser maior que zero")
-    private Double preco;
+    @Min(value = 1, message = "O preço deve ser maior a zero")
+    private double preco;
+
     @NotNull(message = "Loja está vazio")
     private UUID lojaId;
 }

@@ -15,88 +15,94 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/produtos")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ProdutoController {
     private final ProdutoService produtoService;
     private final LojaRepository lojaRepository;
 
-    public ProdutoController(ProdutoService produtoService, LojaRepository lojaRepository) {
+
+    public ProdutoController(ProdutoService produtoService,
+                             LojaRepository lojaRepository) {
         this.produtoService = produtoService;
         this.lojaRepository = lojaRepository;
+
     }
 
     @PostMapping("/salvar")
-    public ResponseEntity<?> salvar(@RequestBody @Valid ProdutoDto dto) {
-        Optional<LojaModel> loja =  lojaRepository.findById(dto.getLojaId());
+    public ResponseEntity<?> salvar(
+            @RequestBody @Valid ProdutoDto dto) {
+        Optional<LojaModel> loja = lojaRepository.findById(dto.getLojaId());
         if (!loja.isPresent()) {
-            return ResponseEntity.badRequest().body("Loja não existe" + dto.getLojaId());
+            return ResponseEntity.badRequest().body(
+                    "Loja não existe: " + dto.getLojaId());
         }
-
+        //Cria o modelo do protudo e associar DTO com MODEL
         ProdutoModel produtoModel = new ProdutoModel();
         BeanUtils.copyProperties(dto, produtoModel, "id", "lojaModel");
         produtoModel.setLojaModel(loja.get()); //associar
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.create());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(produtoService.salvar(produtoModel));
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<ProdutoModel>> listar() {
-        List<ProdutoModel> produtos = produtoService.listar();
-        return ResponseEntity.ok(produtos);
+    public List<ProdutoModel> listar() {
+        return produtoService.listar();
     }
 
-    @PutMapping("/editar/{id}")
+
+
+    @PostMapping("/editar/{id}")
     public ResponseEntity<?> editar(
-            @PathVariable UUID id,
-            @RequestBody @Valid ProdutoDto dto) {
-
+            @RequestBody @Valid ProdutoDto dto,
+            @PathVariable(value = "id") UUID id
+    ) {
         try {
-            ProdutoModel produtoAtualizado = produtoService.atualizar(dto, id);
-            return ResponseEntity.status(HttpStatus.CREATED).body(produtoAtualizado);
+            Optional<LojaModel> loja = lojaRepository.findById(dto.getLojaId());
+            if (!loja.isPresent()) {
+                return ResponseEntity.badRequest().body("Loja não encontrada");
+            }
+            var produto = produtoService.findById(id);
+            if(!produto.isPresent()){
+                return ResponseEntity.badRequest().body("Produto não encontrado");
+            }
+            ProdutoModel produtoModel = new ProdutoModel();
+            BeanUtils.copyProperties(dto, produtoModel, "lojaModel");
+            produtoModel.setId(id);
+            produtoModel.setLojaModel(loja.get());
+            return ResponseEntity.ok(produtoService.salvar(produtoModel));
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao editar: " + e.getMessage());
+            //Retorna eror 500 com a mensagem de erro para o front
+            return ResponseEntity.status(
+                    HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: "+ e.getMessage());
         }
     }
 
-    @DeleteMapping("/apagar/{id}")
-    public ResponseEntity<?> apagar(@PathVariable(value = "id") UUID id) {
+    @PostMapping("/apagar/{id}")
+    public ResponseEntity<String> apagar(@PathVariable UUID id) {
         try {
-            produtoService.apagar(id);
-            return ResponseEntity.ok("Produto apagado com sucesso!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao apagar: " + e.getMessage());
+            produtoService.deletar(id);
+            return ResponseEntity.ok(
+                    "Produto apagado com sucesso!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    "Deu ruim: " +e.getMessage()
+            );
         }
     }
 
-    @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable(value = "id") UUID id) {
-        try {
-            ProdutoModel produtoEncontrado = produtoService.buscar(id);
-            return ResponseEntity.ok(produtoEncontrado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar: " + e.getMessage());
-        }
+    @GetMapping("/buscar")
+    public List<ProdutoModel> buscar(
+            @RequestParam String nomeBusca
+    ){
+        return produtoService.buscarPorNome(nomeBusca);
     }
 
-    @GetMapping("/buscar-por-nome")
-    public ResponseEntity<?> buscarPorNome(@RequestParam String nomeBusca) {
-        try {
-            List<ProdutoModel> produtosEncontrados = produtoService.buscarPorNome(nomeBusca);
-            return ResponseEntity.ok(produtosEncontrados);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar por nome: " + e.getMessage());
-        }
-    }
 
-    @GetMapping("/buscar-por-descricao")
-    public ResponseEntity<?> buscarPorDescricao(@RequestParam String descricaoBusca) {
-        try {
-            List<ProdutoModel> produtosEncontrados = produtoService.buscarPorDescricao(descricaoBusca);
-            return ResponseEntity.ok(produtosEncontrados);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar por descricao: " + e.getMessage());
-        }
-    }
+
+
 }

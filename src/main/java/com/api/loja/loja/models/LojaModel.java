@@ -11,16 +11,18 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "tbLoja")
+@Table(name = "tb_loja")
 public class LojaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String nome;
-    private String descricao;
+    private String endereco;
     private String cnpj;
 
     @OneToMany(mappedBy = "lojaModel", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProdutoModel> produtos = new ArrayList<>();
+
+
 }

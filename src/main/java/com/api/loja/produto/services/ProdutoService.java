@@ -6,65 +6,49 @@ import com.api.loja.produto.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class ProdutoService {
-    private final ProdutoRepository produtoRepository;
-
+    private ProdutoRepository produtoRepository;
     public ProdutoService(ProdutoRepository produtoRepository) {
         this.produtoRepository = produtoRepository;
     }
 
     public ProdutoModel create(ProdutoDto dto) {
         ProdutoModel produto = new ProdutoModel();
+        produto.setNome(dto.getNome());
         produto.setDescricao(dto.getDescricao());
         produto.setPreco(dto.getPreco());
-        produto.setNome(dto.getNome());
-
         return produtoRepository.save(produto);
+    }
+
+    public ProdutoModel salvar(ProdutoModel produtoModel) {
+        return produtoRepository.save(produtoModel);
     }
 
     public List<ProdutoModel> listar() {
         return produtoRepository.findAll();
     }
 
-    public ProdutoModel atualizar(ProdutoDto dto, UUID id) {
-        ProdutoModel produtoExistente = produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado com o ID: " + id));
-        produtoExistente.setNome(dto.getNome());
-        produtoExistente.setPreco(dto.getPreco());
-        produtoExistente.setDescricao(dto.getDescricao());
-        return produtoRepository.save(produtoExistente);
+    public ProdutoModel atualizar(ProdutoDto dto, UUID id){
+        ProdutoModel existente = produtoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        existente.setNome(dto.getNome());
+        existente.setDescricao(dto.getDescricao());
+        existente.setPreco(dto.getPreco());
+        return produtoRepository.save(existente);
     }
-
-    public void apagar(UUID id) {
-        ProdutoModel produtoParaDeletar = produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado com o ID: " + id));
-
-        produtoRepository.delete(produtoParaDeletar);
+    public void deletar(UUID id) {
+        ProdutoModel existente = produtoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        produtoRepository.deleteById(existente.getId());
     }
-
-    public ProdutoModel buscar(UUID id) {
-        ProdutoModel produtoEncontrado = produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado com o ID: " + id));
-
-        return produtoEncontrado;
-    }
-
     public List<ProdutoModel> buscarPorNome(String nomeBusca) {
-        List<ProdutoModel> produtos = produtoRepository.findByNomeContainingIgnoreCase(nomeBusca);
-        if (produtos.isEmpty()) {
-            throw new RuntimeException("Produto não encontrado com o nome informado: " + nomeBusca);
-        }
-        return produtos;
+        return    produtoRepository.findByNomeContainingIgnoreCase(nomeBusca);
     }
-
-    public List<ProdutoModel> buscarPorDescricao(String descricaoBusca) {
-        List<ProdutoModel> produtos = produtoRepository.findByDescricaoContainingIgnoreCase(descricaoBusca);
-        if (produtos.isEmpty()) {
-            throw new RuntimeException("Produto não encontrado com a descrição informada: " + descricaoBusca);
-        }
-        return produtos;
+    public Optional<ProdutoModel> findById(UUID id) {
+        return produtoRepository.findById(id);
     }
 }

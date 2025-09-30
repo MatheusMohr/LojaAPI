@@ -11,63 +11,41 @@ import java.util.UUID;
 
 @Service
 public class LojaService {
-    private final com.api.loja.loja.repository.LojaRepository LojaRepository;
-    private final LojaRepository lojaRepository;
-
-    public LojaService(com.api.loja.loja.repository.LojaRepository LojaRepository, com.api.loja.loja.repository.LojaRepository lojaRepository) {
-        this.LojaRepository = LojaRepository;
+    private LojaRepository lojaRepository;
+    public LojaService(LojaRepository lojaRepository) {
         this.lojaRepository = lojaRepository;
     }
 
     public LojaModel create(LojaDto dto) {
-        LojaModel loja = new LojaModel();
-        loja.setDescricao(dto.getDescricao());
-        loja.setCnpj(dto.getCnpj());
-        loja.setNome(dto.getNome());
-
-        return LojaRepository.save(loja);
+        LojaModel produto = new LojaModel();
+        produto.setNome(dto.getNome());
+        produto.setEndereco(dto.getEndereco());
+        produto.setCnpj(dto.getCnpj());
+        return lojaRepository.save(produto);
     }
 
     public List<LojaModel> listar() {
-        return LojaRepository.findAll();
+        return lojaRepository.findAll();
     }
 
-    public LojaModel atualizar(LojaDto dto, UUID id) {
-        LojaModel lojaExistente = LojaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("loja não encontrado com o ID: " + id));
-        lojaExistente.setNome(dto.getNome());
-        lojaExistente.setCnpj(dto.getCnpj());
-        lojaExistente.setDescricao(dto.getDescricao());
-        return LojaRepository.save(lojaExistente);
+    public Optional<LojaModel> findById(UUID id) {
+        return lojaRepository.findById(id);
     }
 
-    public void apagar(UUID id) {
-        LojaModel lojaParaDeletar = LojaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("loja não encontrado com o ID: " + id));
-
-        LojaRepository.delete(lojaParaDeletar);
+    public LojaModel atualizar(LojaDto dto, UUID id){
+        LojaModel existente = lojaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        existente.setNome(dto.getNome());
+        existente.setEndereco(dto.getEndereco());
+        existente.setCnpj(dto.getCnpj());
+        return lojaRepository.save(existente);
     }
-
-    public LojaModel buscar(UUID id) {
-        LojaModel lojaEncontrado = LojaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("loja não encontrado com o ID: " + id));
-
-        return lojaEncontrado;
+    public void deletar(UUID id) {
+        LojaModel existente = lojaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        lojaRepository.deleteById(existente.getId());
     }
-
     public List<LojaModel> buscarPorNome(String nomeBusca) {
-        List<LojaModel> lojas = LojaRepository.findByNomeContainingIgnoreCase(nomeBusca);
-        if (lojas.isEmpty()) {
-            throw new RuntimeException("loja não encontrado com o nome informado: " + nomeBusca);
-        }
-        return lojas;
-    }
-
-    public List<LojaModel> buscarPorDescricao(String descricaoBusca) {
-        List<LojaModel> lojas = LojaRepository.findByDescricaoContainingIgnoreCase(descricaoBusca);
-        if (lojas.isEmpty()) {
-            throw new RuntimeException("loja não encontrado com a descrição informada: " + descricaoBusca);
-        }
-        return lojas;
+        return    lojaRepository.findByNomeContainingIgnoreCase(nomeBusca);
     }
 }
