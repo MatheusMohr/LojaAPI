@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RestController
 @RequestMapping("/produtos")
 public class ProdutoController {

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
@@ -70,7 +71,10 @@ public class LojaController {
         return lojaService.buscarPorNome(nomeBusca);
     }
 
-
-
+    @GetMapping("/{id}")
+    public ResponseEntity<LojaModel> getLojaById(@PathVariable UUID id) {
+        Optional<LojaModel> loja = lojaService.findById(id);
+        return loja.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
 }
